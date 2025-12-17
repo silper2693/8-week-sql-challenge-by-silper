@@ -228,12 +228,12 @@ FROM CTE;
 ### 5. What was the difference between the longest and shortest delivery times for all orders?
 ```sql
 SELECT
-    MAX(clean_duration) - MIN(clean_duration) AS time_diff
+  MAX(clean_duration) - MIN(clean_duration) AS time_diff
 FROM (
-    SELECT
-        REGEXP_REPLACE(duration, '[^0-9\.]', '', 'g')::numeric AS clean_duration
-    FROM runner_orders
-    WHERE duration <> 'null'
+  SELECT
+    REGEXP_REPLACE(duration, '[^0-9\.]', '', 'g')::numeric AS clean_duration
+  FROM runner_orders
+  WHERE duration <> 'null'
 ) t;
 ```
 ### 6. What was the average speed for each runner for each delivery and do you notice any trend for these values?
