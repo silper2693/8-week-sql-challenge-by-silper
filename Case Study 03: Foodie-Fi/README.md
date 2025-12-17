@@ -25,8 +25,7 @@
 You can use the embedded [DB Fiddle](https://www.db-fiddle.com/f/rHJhRrXy5hbVBNJ6F6b9gJ/16) to easily access the example datasets and start solving the SQL questions.
 
 ## <p align="center">A. Customer Journey.</p>
-Based off the 8 sample customers provided in the sample from the subscriptions table, write a brief description about each customer’s onboarding journey.
-Try to keep it as short as possible - you may also want to run some sort of join to make your explanations a bit easier!
+Based off the 8 sample customers provided in the sample from the subscriptions table, write a brief description about each customer’s onboarding journey. Try to keep it as short as possible - you may also want to run some sort of join to make your explanations a bit easier!
 
 We will use this table. This is Table 2: subscriptions.
 <p align="center"><img width="407" height="980" alt="image" src="https://github.com/user-attachments/assets/ad406979-619e-4965-9e6f-c8aa66f0edb4" /></p>
@@ -270,7 +269,9 @@ The Foodie-Fi team wants you to create a new payments table for the year 2020 th
 - upgrades from pro monthly to pro annual are paid at the end of the current billing period and also starts at the end of the month period
 - once a customer churns they will no longer make payments
 Example outputs for this table might look like the following:
-<p align="center"><img width="791" height="803" alt="image" src="https://github.com/user-attachments/assets/551806af-2a06-4485-80bb-b719ad82ccdc" /></p>
+<p align="center"><img width="541" height="549" alt="image" src="https://github.com/user-attachments/assets/4eb6d2d8-a69f-449f-ad4d-e9748d70cfa3" />
+
+</p>
 
 
 
