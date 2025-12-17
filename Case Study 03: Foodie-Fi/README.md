@@ -28,7 +28,7 @@ You can use the embedded [DB Fiddle](https://www.db-fiddle.com/f/rHJhRrXy5hbVBNJ
 Based off the 8 sample customers provided in the sample from the subscriptions table, write a brief description about each customer’s onboarding journey.
 Try to keep it as short as possible - you may also want to run some sort of join to make your explanations a bit easier!
 
-We will use this table. This is Table 2
+We will use this table. This is Table 2:
 <p align="center"><img width="407" height="980" alt="image" src="https://github.com/user-attachments/assets/ad406979-619e-4965-9e6f-c8aa66f0edb4" /></p>
 
 
