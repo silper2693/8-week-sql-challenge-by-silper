@@ -13,7 +13,7 @@ Danny’s Diner is in need of your assistance to help the restaurant stay afloat
 </p>
 
 ##Table of content
-Business Talk
+#Business Talk
 
 ## Business Talk
 Danny wants to use sales data to understand customer spending behavior, identify popular menu items, and evaluate the impact of the membership program on revenue and customer loyalty.
