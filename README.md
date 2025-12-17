@@ -20,4 +20,4 @@ Please find the solution links for the case studies below. Simply click on the l
 
 - [Case 1: Danny's Diner](https://github.com/silper2693/8-week-sql-challenge-by-silper/tree/main/Case%20Study%2001%3A%20Danny's%20Dinner#-case-study-01-dannys-diner)
 - [Case 2: Pizza Runner](https://github.com/silper2693/8-week-sql-challenge-by-silper/blob/main/Case%20Study%2002%3A%20Pizza%20Runner/README.md#-case-study-02-pizza-runner)
-- Case 3: Foodie-Fi
+- [Case 3: Foodie-Fi](https://github.com/silper2693/8-week-sql-challenge-by-silper/tree/main/Case%20Study%2003%3A%20Foodie-Fi#-case-study-03-foodie-fi)
