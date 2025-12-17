@@ -8,7 +8,7 @@
 
 <p align="justify">Danny’s Diner is in need of your assistance to help the restaurant stay afloat - the restaurant has captured some very basic data from their few months of operation but have no idea how to use their data to help them run the business.</p>
 
-## 📌 Table of content
+## 📌 Table of Contents
 - [💡 Business Talk](#-business-talk)
 - [🔗 Entity Relationship Diagram](#-entity-relationship-diagram)
 
@@ -19,10 +19,18 @@ Danny wants to use sales data to understand customer spending behavior, identify
 
 ## 🔗 Entity Relationship Diagram
 
-<p align="center">
-<img width="706" height="357" alt="image" src="https://github.com/user-attachments/assets/72565f79-fe6d-43f2-8a99-440dbb5c9cf8" />
-</p>
+<p align="center"><img width="706" height="357" alt="image" src="https://github.com/user-attachments/assets/72565f79-fe6d-43f2-8a99-440dbb5c9cf8" /></p>
 
+## 🧠 Question & Solution
+### 1. What is the total amount each customer spent at the restaurant?
+SELECT
+		customer_id
+		,SUM(price) AS total_spent
+FROM dannys_diner.sales AS s
+INNER JOIN menu AS m
+  ON s.product_id = m.product_id
+GROUP BY customer_id
+ORDER BY total_spent DESC
 
 
 
