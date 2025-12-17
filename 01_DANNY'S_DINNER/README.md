@@ -4,8 +4,8 @@
 <img width="413" height="413" alt="image" src="https://github.com/user-attachments/assets/d9ddbe42-190d-4c2c-8c3e-9cc63c4e9104" />
 </p>
 
-<p align="center"><p align="bold">
-Introduction
+<p align="center">
+### Introduction
 </p>
 
 <p align="justify">
