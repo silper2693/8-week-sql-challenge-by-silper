@@ -265,13 +265,102 @@ WHERE plan_id = 2
 
 ## <p align="center">C. Challenge Payment Question.</p>
 The Foodie-Fi team wants you to create a new payments table for the year 2020 that includes amounts paid by each customer in the subscriptions table with the following requirements:
-- monthly payments always occur on the same day of month as the original start_date of any monthly paid plan upgrades from basic to monthly or pro plans are reduced by the current paid amount in that month and start immediately
-- upgrades from pro monthly to pro annual are paid at the end of the current billing period and also starts at the end of the month period
-- once a customer churns they will no longer make payments
+- Monthly payments always occur on the same day of month as the original start_date of any monthly paid plan upgrades from basic to monthly or pro plans are reduced by the current paid amount in that month and start immediately
+- Upgrades from pro monthly to pro annual are paid at the end of the current billing period and also starts at the end of the month period
+- Once a customer churns they will no longer make payments
 Example outputs for this table might look like the following:
-<p align="center"><img width="541" height="549" alt="image" src="https://github.com/user-attachments/assets/4eb6d2d8-a69f-449f-ad4d-e9748d70cfa3" />
+<p align="center"><img width="541" height="549" alt="image" src="https://github.com/user-attachments/assets/4eb6d2d8-a69f-449f-ad4d-e9748d70cfa3" /></p>
 
-</p>
+My solution quite big =))). I’ve simplified parts of it to keep things concise.
+```sql
+WITH CTE_1 AS (
+  SELECT *
+    ,LAG(plan_id) OVER(
+      PARTITION BY customer_id
+      ORDER BY start_date) AS previous_plan
+    ,LEAD(plan_id) OVER(
+      PARTITION BY customer_id
+      ORDER BY start_date) AS next_plan
+  FROM subscriptions
+  WHERE start_date <= '2020-12-31'
+)
+
+, CTE_2 AS (
+SELECT *
+  ,CASE
+    WHEN next_plan IS NOT NULL AND plan_id = 0 THEN start_date + 6
+    WHEN next_plan IS NULL THEN MAKE_DATE(EXTRACT(year from start_date)::INT, 12, EXTRACT(day from start_date)::INT)
+    WHEN plan_id <> 0 AND plan_id < next_plan THEN LEAD(start_date) OVER(
+      PARTITION BY customer_id
+      ORDER BY start_date)
+  END AS end_date_anp
+FROM CTE_1
+)
+
+, CTE_3 AS (
+  SELECT *
+    ,CASE
+      WHEN plan_id = 0 THEN NULL
+      WHEN plan_id <> 0 THEN MAKE_DATE(
+        EXTRACT(YEAR FROM start_date)::INT,
+        EXTRACT(MONTH FROM end_date_anp)::INT,
+        LEAST(
+          EXTRACT(DAY FROM start_date)::INT,
+          EXTRACT(DAY FROM (DATE_TRUNC('month', end_date_anp) + INTERVAL '1 month - 1 day'))::INT
+        )
+      )
+    END AS end_date_obv
+  FROM CTE_2
+)
+
+, CTE_4 AS (
+  SELECT
+    customer_id
+    ,previous_plan
+    ,plan_id
+    ,next_plan
+    ,start_date
+    ,LAG(end_date_obv) OVER(
+        PARTITION BY customer_id
+        ORDER BY start_date) AS compare
+    ,end_date_obv
+    ,end_date_anp
+    ,gs.payment_date::DATE
+  FROM CTE_3 c3
+  CROSS JOIN LATERAL generate_series(
+    c3.start_date,
+    c3.end_date_anp,
+    INTERVAL '1 month'
+  ) AS gs(payment_date)
+  WHERE c3.plan_id NOT IN (0, 4)
+  ORDER BY 1, 3
+)
+
+, CTE_final AS (
+  SELECT
+    customer_id
+    ,c4.plan_id
+    ,p.plan_name
+    ,payment_date
+    ,CASE
+      WHEN c4.plan_id <> 0 AND compare IS NULL THEN p.price
+      WHEN c4.plan_id <> 0 AND (EXTRACT(day from compare) = EXTRACT(day from start_date)) THEN p.price
+      WHEN c4.plan_id <> 0 AND (EXTRACT(day from compare) <> EXTRACT(day from start_date)) THEN p.price - p2.price
+    END AS amount
+  FROM CTE_4 c4
+  LEFT JOIN plans p
+    ON c4.plan_id = p.plan_id
+  LEFT JOIN plans p2
+    ON c4.previous_plan = p2.plan_id
+)
+
+SELECT *
+  ,ROW_NUMBER() OVER(
+    PARTITION BY customer_id
+    ORDER BY payment_date) AS payment_order
+FROM CTE_final
+ORDER BY 1, 2
+
 
 
 
