@@ -8,7 +8,7 @@
 - [💡 Business Talk](#-business-talk)
 - [🔗 Entity Relationship Diagram](#-entity-relationship-diagram)
 - [🧠 Question & Solution](#-question-&-solution)
-To find out more: [here](https://8weeksqlchallenge.com/case-study-1/)
+- To find out more: [here](https://8weeksqlchallenge.com/case-study-1/)
 
 ## 💡 Business Talk
 <p align="justify">In this case study, I analyzed customer spending and visit patterns to identify high-value customers and popular menu items.</p>
