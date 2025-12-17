@@ -47,7 +47,6 @@ Looking at the runner_orders table below, we can see that there are
 <p align="center"><img width="1595" height="490" alt="image" src="https://github.com/user-attachments/assets/a9e08a99-112e-4468-b3c6-9e398155760c" /></p>
 
 ## 🧠 Question & Solution
-
 You can use the embedded [DB Fiddle](https://www.db-fiddle.com/f/7VcQKQwsS3CTkGRFG7vu98/65) to easily access the example datasets and start solving the SQL questions.
 
 ## <p align="center">A. Pizza Metrics.</p>
@@ -164,7 +163,6 @@ FROM customer_orders
 GROUP BY 1;
 ```
 ## <p align="center">B. Runner and Customer Experience.</p>
-
 ### 1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)
 ```sql
 SELECT 
@@ -262,9 +260,7 @@ FROM runner_orders
 GROUP BY runner_id
 ORDER BY runner_id;
 ```
-
 ## <p align="center">C. Ingredient Optimisation.</p>
-
 ### 1. What are the standard ingredients for each pizza?
 ```sql
 SELECT
@@ -300,11 +296,8 @@ WHERE extra_toppin IS NOT NULL
 GROUP BY topping_name
 ORDER BY popular DESC;
 ```
-
 ### 3. What was the most common exclusion?
-
-replace extra with exclusion in question 2
-
+"replace extra with exclusion in question 2"
 ### 4. Generate an order item for each record in the customers_orders table in the format of one of the following:
 - Meat Lovers
 - Meat Lovers - Exclude Beef
@@ -350,7 +343,6 @@ WHERE extras NOT IN ('', 'null')
 ) x ON TRUE
 ORDER BY 1;
 ```
-
 ### 5. Generate an alphabetically ordered comma separated ingredient list for each pizza order from the customer_orders table and add a 2x in front of any relevant ingredients
 - For example: "Meat Lovers: 2xBacon, Beef, ... , Salami"
 ```sql
@@ -531,7 +523,6 @@ GROUP BY topping_name
 ORDER BY 2;
 ```
 ## <p align="center">D. Pizza Metrics.</p>
-
 ### 1. If a Meat Lovers pizza costs $12 and Vegetarian costs $10 and there were no charges for changes - how much money has Pizza Runner made so far if there are no delivery fees?
 ```sql
 WITH CTE AS (
