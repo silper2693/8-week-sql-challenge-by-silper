@@ -31,7 +31,60 @@ FROM dannys_diner.sales AS s
 INNER JOIN menu AS m
   ON s.product_id = m.product_id
 GROUP BY customer_id
-ORDER BY total_spent DESC
+ORDER BY total_spent DESC;
+```
+
+### 2. How many days has each customer visited the restaurant?
+```sql
+SELECT
+  customer_id
+  ,COUNT(DISTINCT order_date) AS quantity_visitor
+FROM sales
+GROUP BY customer_id;
+```
+### 3. What was the first item from the menu purchased by each customer?
+```sql
+WITH base_orders AS (
+  SELECT
+    s.customer_id
+    ,s.order_date
+    ,m.product_name
+    ,RANK() OVER (
+      PARTITION BY s.customer_id
+      ORDER BY s.order_date) AS order_rank
+    ,ROW_NUMBER() OVER (
+      PARTITION BY s.customer_id
+      ORDER BY s.order_date) AS order_row_num
+  FROM sales AS s
+  INNER JOIN menu AS m
+    ON s.product_id = m.product_id
+)
+
+SELECT
+  customer_id
+  ,order_date
+  ,product_name
+FROM base_orders
+WHERE order_rank = 1
+  AND order_row_num = 1;
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
