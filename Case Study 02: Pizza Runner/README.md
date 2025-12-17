@@ -528,12 +528,146 @@ SELECT
   ,COUNT(*)
 FROM CTE_4
 GROUP BY topping_name
-ORDER BY 2
+ORDER BY 2;
 ```
 ## <p align="center">D. Pizza Metrics.</p>
 
+### 1. If a Meat Lovers pizza costs $12 and Vegetarian costs $10 and there were no charges for changes - how much money has Pizza Runner made so far if there are no delivery fees?
+```sql
+WITH CTE AS (
+  SELECT
+    pizza_id
+    ,CASE
+      WHEN pizza_id = 1 THEN 12
+      WHEN pizza_id = 2 THEN 10
+      ELSE 0
+    END AS price
+  FROM customer_orders
+)
 
+SELECT
+  pizza_id
+  ,SUM(price)
+FROM CTE
+GROUP BY pizza_id;
+```
+### 2. What if there was an additional $1 charge for any pizza extras? Add cheese is $1 extra
+```sql
+WITH CTE AS (
+  SELECT 
+  	ROW_NUMBER() OVER(ORDER BY order_id) AS order_no
+	,order_id
+    ,pizza_id
+    ,CASE
+      WHEN pizza_id = 1 THEN 12
+      WHEN pizza_id = 2 THEN 10
+      ELSE 0
+    END AS price
+    ,NULLIF(NULLIF(exclusions, ''), 'null') AS exclusions
+    ,NULLIF(NULLIF(extras, ''), 'null') AS extras
+  FROM customer_orders
+)
 
+, CTE_2 AS (
+  SELECT
+    order_no
+    ,pizza_id
+    ,price
+    ,TRIM(x.toppin) AS toppin
+  FROM CTE
+  LEFT JOIN LATERAL(
+    SELECT regexp_split_to_table(extras,',') AS toppin) AS x ON TRUE
+)
+
+, CTE_3 AS (
+  SELECT
+    order_no
+    ,pizza_id
+    ,price
+    ,COUNT(toppin) AS extras_price
+  FROM CTE_2
+  GROUP BY order_no, pizza_id, price
+)
+
+SELECT
+  pizza_id
+  ,SUM(price + extras_price) AS total_price
+FROM CTE_3
+GROUP BY pizza_id
+ORDER BY pizza_id;
+```
+### 3. The Pizza Runner team now wants to add an additional ratings system that allows customers to rate their runner, how would you design an additional table for this new dataset - generate a schema for this new table and insert your own data for ratings for each successful customer order between 1 to 5.
+```sql
+DROP TABLE IF EXISTS runner_ratings;
+CREATE TABLE runner_ratings (
+  "rating_id" VARCHAR(5),
+  "order_id" INTEGER,
+  "runner_id" INTEGER,
+  "rating" VARCHAR(3),
+  "rating_time" VARCHAR(19),
+  "comment" VARCHAR(20)
+);
+INSERT INTO runner_ratings
+  ("rating_id", "order_id", "runner_id", "rating", "rating_time", "comment")
+VALUES
+  ('r_n01', '1', '1', '4', '2020-01-01 18:50:47', 'a lil bit late'),
+  ('r_n02', '2', '1', '4', '2020-01-01 19:42:28', 'just in time'),
+  ('r_n03', '3', '1', '4', '2020-01-02 00:37:53', 'good delivery'),
+  ('r_n04', '4', '2', '3', '2020-01-04 14:33:42', 'a lil bit late'),
+  ('r_n05', '5', '3', '5', '2020-01-08 21:31:04', 'fast and friendly'),
+  ('r_n06', '6', '3', 'null', 'null', NULL),
+  ('r_n07', '7', '2', '4', '2020-01-08 22:04:06', 'just in time'),
+  ('r_n08', '8', '2', '5', '2020-01-09 00:38:57', 'fast and friendly'),
+  ('r_n09', '9', '2', '', 'null', NULL),
+  ('r_n10', '10', '1', '5', '2020-01-11 19:07:29', 'perfect timing');
+```
+### 4. Using your newly generated table - can you join all of the information together to form a table which has the following information for successful deliveries?
+- customer_id
+- order_id
+- runner_id
+- rating
+- order_time
+- pickup_time
+- Time between order and pickup
+- Delivery duration
+- Average speed
+- Total number of pizzas
+```sql	
+SELECT
+  co.customer_id
+  ,ro.order_id
+  ,ro.runner_id
+  ,rr.rating
+  ,co.order_time
+  ,ro.pickup_time
+  ,ro.pickup_time::TIMESTAMP - co.order_time::TIMESTAMP AS order_pickup_duration
+  ,regexp_replace(ro.duration, '[^0-9\.]', '', 'g') AS duration
+  ,regexp_replace(ro.distance, '[^0-9\.]', '', 'g') AS distance
+  ,ROUND(regexp_replace(ro.distance, '[^0-9\.]', '', 'g')::NUMERIC / regexp_replace(ro.duration, '[^0-9\.]', '', 'g')::NUMERIC * 60, 2) AS avg_speed
+  ,COUNT(*) AS total_pizza
+FROM runner_orders ro
+LEFT JOIN customer_orders co
+  ON ro.order_id = co.order_id
+LEFT JOIN runner_ratings rr
+  ON rr.order_id = ro.order_id
+WHERE pickup_time NOT IN ('', 'null')
+GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10;
+```
+### 5. If a Meat Lovers pizza was $12 and Vegetarian $10 fixed prices with no cost for extras and each runner is paid $0.30 per kilometre traveled - how much money does Pizza Runner have left over after these deliveries?
+```sql
+SELECT
+  ,SUM(
+    CASE
+      WHEN pizza_id = 1 THEN 12 - (regexp_replace(ro.distance, '[^0-9\.]', '', 'g')::NUMERIC * 0.3)
+      WHEN pizza_id = 2 THEN 10 - (regexp_replace(ro.distance, '[^0-9\.]', '', 'g')::NUMERIC * 0.3)
+    END) AS price_after_deli
+FROM runner_orders ro
+LEFT JOIN customer_orders co
+  ON ro.order_id = co.order_id
+WHERE distance <> 'null'
+GROUP BY 1;
+```
+## ⭐ Bonus Question
 
 
 
