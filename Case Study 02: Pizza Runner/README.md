@@ -11,8 +11,8 @@
 - [🔗 Entity Relationship Diagram](#-entity-relationship-diagram)
 - [📊 About the Data](#-)
 - [🧠 Question & Solution](#-question--solution)
- - [A. Pizza Metrics](#a-pizza-metrics)
- - 
+ + [A. Pizza Metrics](#a-pizza-metrics)
+ + 
 - [⭐ Bonus Question](#-bonus-question)
 - To find out more: Click [here](https://8weeksqlchallenge.com/case-study-1/)
 
