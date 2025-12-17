@@ -55,20 +55,20 @@ You can use the embedded [DB Fiddle](https://www.db-fiddle.com/f/7VcQKQwsS3CTkGR
 ### 1. How many pizzas were ordered?
 ```sql
 SELECT
-	COUNT(*) AS pizza_ordered
+  COUNT(*) AS pizza_ordered
 FROM customer_orders;
 ```
 ### 2. How many unique customer orders were made?
 ```sql
 SELECT
-	COUNT(DISTINCT order_id) AS unique_pizza_ordered
+  COUNT(DISTINCT order_id) AS unique_pizza_ordered
 FROM customer_orders;
 ```
 ### 3. How many successful orders were delivered by each runner?
 ```sql
 SELECT
-	runner_id
-	,COUNT(order_id) AS complete_orders
+  runner_id
+  ,COUNT(order_id) AS complete_orders
 FROM runner_orders
 WHERE pickup_time <> 'null'
 GROUP BY runner_id
@@ -77,8 +77,8 @@ ORDER BY runner_id;
 ### 4. How many of each type of pizza was delivered?
 ```sql
 SELECT
-	pn.pizza_name
-	,COUNT(*) AS quantity
+  pn.pizza_name
+  ,COUNT(*) AS quantity
 FROM customer_orders AS co
 LEFT JOIN runner_orders AS ro
   ON co.order_id = ro.order_id
@@ -90,9 +90,9 @@ GROUP BY pn.pizza_name;
 ### 5. How many Vegetarian and Meatlovers were ordered by each customer?
 ```sql
 SELECT
-	co.customer_id
-	,COUNT(CASE WHEN pizza_name = 'Meatlovers' THEN 1 END) AS meatlovers
-	,COUNT(CASE WHEN pizza_name = 'Vegetarian' THEN 1 END) AS vegetarian
+  co.customer_id
+  ,COUNT(CASE WHEN pizza_name = 'Meatlovers' THEN 1 END) AS meatlovers
+  ,COUNT(CASE WHEN pizza_name = 'Vegetarian' THEN 1 END) AS vegetarian
 FROM customer_orders AS co
 LEFT JOIN pizza_names AS pn
   ON co.pizza_id = pn.pizza_id
@@ -102,8 +102,8 @@ ORDER BY co.customer_id;
 ### 6. What was the maximum number of pizzas delivered in a single order?
 ```sql
 SELECT
-	order_id
-	,COUNT(order_id) AS max_in_order
+  order_id
+  ,COUNT(order_id) AS max_in_order
 FROM customer_orders AS co
 GROUP BY order_id
 ORDER BY max_in_order DESC
@@ -112,19 +112,19 @@ LIMIT 1;
 ### 7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
 ```sql
 WITH CTE AS (
-	SELECT
-		customer_id
-		,CASE WHEN extras IS NULL OR extras IN ('', 'null') THEN NULL ELSE extras END AS ext
-		,CASE WHEN exclusions IS NULL OR exclusions IN ('', 'null') THEN NULL ELSE exclusions END AS exc
-	FROM customer_orders AS co
-	LEFT JOIN pizza_names AS pn
+  SELECT
+	customer_id
+	,CASE WHEN extras IS NULL OR extras IN ('', 'null') THEN NULL ELSE extras END AS ext
+	,CASE WHEN exclusions IS NULL OR exclusions IN ('', 'null') THEN NULL ELSE exclusions END AS exc
+  FROM customer_orders AS co
+  LEFT JOIN pizza_names AS pn
     ON co.pizza_id = pn.pizza_id
 )
 
 SELECT
-	customer_id
-	,SUM(CASE WHEN ext IS NULL AND exc IS NULL THEN 1 ELSE 0 END) AS none_change
-	,SUM(CASE WHEN ext IS NOT NULL OR exc IS NOT NULL THEN 1 ELSE 0 END) AS some_change
+  customer_id
+  ,SUM(CASE WHEN ext IS NULL AND exc IS NULL THEN 1 ELSE 0 END) AS none_change
+  ,SUM(CASE WHEN ext IS NOT NULL OR exc IS NOT NULL THEN 1 ELSE 0 END) AS some_change
 FROM CTE
 GROUP BY customer_id
 ORDER BY customer_id;
@@ -132,22 +132,24 @@ ORDER BY customer_id;
 ### 8. How many pizzas were delivered that had both exclusions and extras?
 ```sql
 WITH CTE AS (
-	SELECT *
-		,CASE WHEN exclusions IS NULL OR exclusions IN ('', 'null') THEN NULL ELSE exclusions END AS exc
-		,CASE WHEN extras IS NULL OR extras IN ('', 'null') THEN NULL ELSE extras END AS ext
-	FROM runner_orders AS ro
-	LEFT JOIN customer_orders AS co ON ro.order_id = co.order_id
-	WHERE pickup_time <> 'null'
+  SELECT *
+	,CASE WHEN exclusions IS NULL OR exclusions IN ('', 'null') THEN NULL ELSE exclusions END AS exc
+	,CASE WHEN extras IS NULL OR extras IN ('', 'null') THEN NULL ELSE extras END AS ext
+  FROM runner_orders AS ro
+  LEFT JOIN customer_orders AS co
+    ON ro.order_id = co.order_id
+  WHERE pickup_time <> 'null'
 )
 
 SELECT *
 FROM CTE
-WHERE exc IS NOT NULL AND ext IS NOT NULL;
+WHERE exc IS NOT NULL
+  AND ext IS NOT NULL;
 ```
 ### 9. What was the total volume of pizzas ordered for each hour of the day?
 ```sql
 SELECT
-	EXTRACT(hour FROM order_time) AS hour_in_day
+  EXTRACT(hour FROM order_time) AS hour_in_day
   ,COUNT(order_id) AS volume_order
 FROM customer_orders
 GROUP BY hour_in_day
