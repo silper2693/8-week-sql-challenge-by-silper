@@ -1,6 +1,8 @@
 # 8 Week SQL Challenge Solutions
 
-This repository contains my solutions to the [**8 Week SQL Challenge**](https://8weeksqlchallenge.com/) by Danny Ma.
+This repository contains my solutions to the [**8 Week SQL Challenge**](https://8weeksqlchallenge.com/) by Danny Ma. 
+
+I’ve been self-studying SQL for about two months at the time of creating this repository. Apologies if my queries are still fairly basic and not fully optimized. And since this is also my first time using GitHub, I’m not quite sure how to receive feedback or contributions from others.
 
 A special thanks to [Data with Danny](https://www.linkedin.com/company/datawithdanny/) for creating these insightful and engaging SQL case studies! 👋🏻
 
