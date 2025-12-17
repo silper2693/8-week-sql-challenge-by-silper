@@ -24,8 +24,6 @@ Or click [here](https://dbdiagram.io/d/608d07e4b29a09603d12edbd)
 
 You can use the embedded [DB Fiddle](https://www.db-fiddle.com/f/2rM8RAnq7h5LLDTzZiRWcd/138) to easily access the example datasets and start solving the SQL questions.
 
-### <p align="center">Question</p>
-
 ### 1. What is the total amount each customer spent at the restaurant?
 ```sql
 SELECT
@@ -235,7 +233,7 @@ GROUP BY customer_id
 ORDER BY customer_id;
 ```
 
-###<p align="center">Bonus Question</p>
+## ⭐ Bonus Question
 
 ### Join All The Things.
 ```sql
