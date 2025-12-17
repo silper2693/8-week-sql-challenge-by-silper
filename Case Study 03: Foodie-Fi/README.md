@@ -19,8 +19,7 @@
 <p align="justify">Foodie-Fi operates as a subscription-based streaming platform, where customers progress through a free trial before converting into paid monthly or annual plans. Understanding customer behaviour, churn, and revenue timing is critical for sustainable growth.</p>
 
 ## 🔗 Entity Relationship Diagram
-<p align="center"><img width="319" height="767" alt="image" src="https://github.com/user-attachments/assets/43e9ae24-c410-4d97-a6b7-85f68d209ec4" />
-</p>
+<p align="center"><img width="772" height="234" alt="image" src="https://github.com/user-attachments/assets/7bf022c4-6fe4-423c-976a-518044baaf97" /></p>
 
 ## 🧠 Question & Solution
 You can use the embedded [DB Fiddle](https://www.db-fiddle.com/f/rHJhRrXy5hbVBNJ6F6b9gJ/16) to easily access the example datasets and start solving the SQL questions.
@@ -29,7 +28,7 @@ You can use the embedded [DB Fiddle](https://www.db-fiddle.com/f/rHJhRrXy5hbVBNJ
 Based off the 8 sample customers provided in the sample from the subscriptions table, write a brief description about each customer’s onboarding journey. Try to keep it as short as possible - you may also want to run some sort of join to make your explanations a bit easier!
 
 We will use this table. This is Table 2: subscriptions.
-<p align="center"><img width="407" height="980" alt="image" src="https://github.com/user-attachments/assets/ad406979-619e-4965-9e6f-c8aa66f0edb4" /></p>
+<p align="center"><img width="319" height="767" alt="image" src="https://github.com/user-attachments/assets/b5848650-a6da-4470-8705-725817aad241" /></p>
 
 ```sql
 SELECT
