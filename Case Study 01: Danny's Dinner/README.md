@@ -16,6 +16,7 @@
 
 ## 🔗 Entity Relationship Diagram
 <p align="center"><img width="706" height="357" alt="image" src="https://github.com/user-attachments/assets/72565f79-fe6d-43f2-8a99-440dbb5c9cf8" /></p>
+
 Or click [here](https://dbdiagram.io/d/608d07e4b29a09603d12edbd)
 
 ## 🧠 Question & Solution
