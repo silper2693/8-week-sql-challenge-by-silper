@@ -14,9 +14,9 @@
   - [🔨 Table: runner_orders](#-table-runner_orders)
 - [🧠 Question & Solution](#-question--solution)
   - [A. Pizza Metrics](#a-pizza-metrics)
-  - [B. Runner and Customer Experience]()
-  - [C. Ingredient Optimisation]()
-  - [D. Pricing and Ratings]()
+  - [B. Runner and Customer Experience](#b-runner-and-customer-experience)
+  - [C. Ingredient Optimisation](#c-ingredient-optimisation)
+  - [D. Pricing and Ratings](#d-pizza-metrics)
 - [⭐ Bonus Question](#-bonus-question)
 - To find out more: Click [here](https://8weeksqlchallenge.com/case-study-1/)
 
@@ -161,7 +161,7 @@ SELECT
 FROM customer_orders
 GROUP BY 1;
 ```
-## <p align="center">b. Runner and Customer Experience.</p>
+## <p align="center">B. Runner and Customer Experience.</p>
 
 ### 1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)
 ```sql
@@ -261,10 +261,10 @@ GROUP BY runner_id
 ORDER BY runner_id;
 ```
 
-## <p align="center">c. Ingredient Optimisation.</p>
+## <p align="center">C. Ingredient Optimisation.</p>
 
 
-## <p align="center">d. Pizza Metrics.</p>
+## <p align="center">D. Pizza Metrics.</p>
 
 
 
