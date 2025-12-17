@@ -8,6 +8,7 @@
 - [💡 Business Talk](#-business-talk)
 - [🔗 Entity Relationship Diagram](#-entity-relationship-diagram)
 - [🧠 Question & Solution](#-question--solution)
+- [⭐ Bonus Question](#-bonus-question)
 - To find out more: [here](https://8weeksqlchallenge.com/case-study-1/)
 
 ## 💡 Business Talk
