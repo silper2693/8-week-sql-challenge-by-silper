@@ -196,5 +196,5 @@ ORDER BY customer_id, txn_month;
 ```
 5.What is the percentage of customers who increase their closing balance by more than 5%?
 ```sql
-coming soon
+coming soon 😘
 ```
