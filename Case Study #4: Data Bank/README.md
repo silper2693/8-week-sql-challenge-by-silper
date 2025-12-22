@@ -25,3 +25,176 @@
 
 ## 🧠 Question & Solution
 You can use the embedded [DB Fiddle](https://www.db-fiddle.com/f/2GtQz4wZtuNNu7zXH5HtV4/3) to easily access the example datasets and start solving the SQL questions.
+
+## <p align="center">A. Customer Nodes Exploration.</p>
+
+### 1. How many unique nodes are there on the Data Bank system?
+```sql
+SELECT 
+  COUNT(DISTINCT node_id)
+FROM customer_nodes;
+```
+### 2. What is the number of nodes per region?
+```sql
+SELECT 
+  r.region_name
+  ,COUNT(DISTINCT cn.node_id) AS node_quantity
+FROM customer_nodes AS cn
+LEFT JOIN regions AS r
+  ON r.region_id = cn.region_id
+GROUP BY r.region_name
+ORDER BY r.region_name;
+```
+### 3. How many customers are allocated to each region?
+```sql
+SELECT 
+  r.region_name
+  ,COUNT(DISTINCT customer_id)
+FROM customer_nodes AS cn
+LEFT JOIN regions AS r
+  ON r.region_id = cn.region_id
+GROUP BY r.region_name
+ORDER BY r.region_name;
+```
+### 4. How many days on average are customers reallocated to a different node?
+```sql
+WITH CTE AS (
+  SELECT
+    customer_id
+    ,node_id
+    ,SUM(end_date - start_date) AS avd
+  FROM customer_nodes AS cn
+  WHERE end_date <> '9999-12-31'
+  GROUP BY customer_id, node_id
+)
+
+SELECT
+  ROUND(AVG(avd), 0) AS average_day_per_node
+FROM CTE;
+```
+### 5. What is the median, 80th and 95th percentile for this same reallocation days metric for each region?
+```sql
+WITH CTE AS (
+  SELECT
+    region_name
+    ,customer_id
+    ,node_id
+    ,start_date
+    ,end_date
+    ,LEAD(start_date) OVER(
+      PARTITION BY customer_id
+      ORDER BY end_date) - start_date AS day_trans_count
+    ,LEAD(node_id) OVER(
+      PARTITION BY customer_id
+      ORDER BY start_date) AS next_node
+  FROM customer_nodes AS cn
+  LEFT JOIN regions AS r
+    ON cn.region_id = r.region_id
+  WHERE end_date <> '9999-12-31'
+)
+
+SELECT
+  region_name
+  ,ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY avg_day_trans)) AS median
+  ,ROUND(PERCENTILE_CONT(0.8) WITHIN GROUP (ORDER BY avg_day_trans)) AS p80
+  ,ROUND(PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY avg_day_trans)) AS p95
+FROM (
+  SELECT
+    region_name
+    ,customer_id
+    ,ROUND(AVG(day_trans_count), 0) AS avg_day_trans
+  FROM CTE
+  WHERE node_id <> next_node
+  GROUP BY region_name, customer_id
+) AS x
+GROUP BY region_name;
+```
+## <p align="center">B. Customer Transactions.</p>
+
+### 1. What is the unique count and total amount for each transaction type?
+```sql
+SELECT
+  txn_type
+  ,COUNT(txn_type) AS quantity_transaction
+  ,SUM(txn_amount) AS total_amount
+FROM customer_transactions
+GROUP BY txn_type
+```
+### 2. What is the average total historical deposit counts and amounts for all customers?
+```sql
+WITH CTE AS (
+  SELECT
+    customer_id
+    ,COUNT(txn_type) AS quantity_transaction
+    ,SUM(txn_amount) AS total_amount
+  FROM customer_transactions
+  WHERE txn_type = 'deposit'
+  GROUP BY customer_id
+)
+
+SELECT
+  ROUND(AVG(quantity_transaction), 1) AS avg_deposit
+  ,ROUND(AVG(total_amount), 1) AS avg_amount
+FROM CTE;
+```
+### 3. For each month - how many Data Bank customers make more than 1 deposit and either 1 purchase or 1 withdrawal in a single month?
+```sql
+WITH CTE AS (
+  SELECT
+    DATE_TRUNC('month', txn_date)::DATE AS txn_month
+    ,customer_id
+    ,SUM(CASE WHEN txn_type = 'deposit' THEN 1 ELSE 0 END) AS deposit
+    ,SUM(CASE WHEN txn_type = 'purchase' THEN 1 ELSE 0 END) AS purchase
+    ,SUM(CASE WHEN txn_type = 'withdrawal' THEN 1 ELSE 0 END) AS withdrawal
+  FROM customer_transactions
+  GROUP BY DATE_TRUNC('month', txn_date), customer_id
+)
+
+SELECT
+  txn_month
+  ,COUNT(customer_id) AS total_customer
+FROM CTE
+WHERE deposit > 1
+  AND (purchase >= 1 OR withdrawal >= 1)
+GROUP BY txn_month
+ORDER BY txn_month;
+```
+### 4. What is the closing balance for each customer at the end of the month?
+```sql
+WITH CTE AS (
+  SELECT
+  	customer_id
+    ,DATE_TRUNC('month', txn_date) + INTERVAL '1 month' - INTERVAL '1 day' AS txn_month
+    ,txn_type
+    ,txn_amount
+    ,CASE
+      WHEN txn_type = 'deposit' THEN '+' || txn_amount
+      WHEN txn_type IN ('purchase', 'withdrawal') THEN '-' || txn_amount
+      ELSE ''
+    END AS sign_amount
+  FROM customer_transactions
+)
+
+, CTE_2 AS (
+  SELECT
+    txn_month::DATE
+    ,customer_id
+    ,STRING_AGG(sign_amount, ' ') AS operation_amount
+  FROM CTE
+  GROUP BY txn_month, customer_id
+)
+
+SELECT
+  txn_month
+  ,customer_id
+  ,SUM(val[1]::INT) AS closing_balance
+FROM CTE_2
+LEFT JOIN LATERAL regexp_matches(operation_amount, '[+-]\s*\d+', 'g') AS x(val)
+  ON TRUE
+GROUP BY txn_month, customer_id
+ORDER BY customer_id, txn_month;
+```
+5.What is the percentage of customers who increase their closing balance by more than 5%?
+```sql
+coming soon
+```
