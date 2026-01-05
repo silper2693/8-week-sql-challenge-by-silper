@@ -282,7 +282,7 @@ For this multi-part challenge question - you have been requested to generate the
 - minimum, average and maximum values of the running balance for each customer
 Using all of the data available - how much data would have been required for each option on a monthly basis?
 
-###Option 1
+### Option 1
 ```sql
 WITH CTE AS (
   SELECT *
