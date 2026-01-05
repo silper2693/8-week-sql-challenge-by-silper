@@ -182,7 +182,7 @@ SELECT
   ) AS closing_balance
 FROM CTE
 ```
-### 5.What is the percentage of customers who increase their closing balance by more than 5%?
+### 5. What is the percentage of customers who increase their closing balance by more than 5%?
 
 Since Danny did not require the customers’ account balances to be greater than 0, my solution presents two scenarios:
 - Including customers with negative balances that increase either to a positive balance or to a higher (less negative) balance
@@ -269,3 +269,65 @@ WHERE percentage IS NOT NULL
 ```
 - If calculated using approach 1, all four cases are retained and the rate is 67.4%.
 - If calculated using approach 2, case 4 is excluded and the rate is 50.4%.
+
+## <p align="center">C. Data Allocation Challenge.</p>
+
+To test out a few different hypotheses - the Data Bank team wants to run an experiment where different groups of customers would be allocated data using 3 different options:
+- Option 1: data is allocated based off the amount of money at the end of the previous month
+- Option 2: data is a llocated on the average amount of money kept in the account in the previous 30 days
+- Option 3: data is updated real-time
+For this multi-part challenge question - you have been requested to generate the following data elements to help the Data Bank team estimate how much data will need to be provisioned for each option:
+- running customer balance column that includes the impact each transaction
+- customer balance at the end of each month
+- minimum, average and maximum values of the running balance for each customer
+Using all of the data available - how much data would have been required for each option on a monthly basis?
+
+###Option 1
+```sql
+WITH CTE AS (
+  SELECT *
+    ,SUM(CASE
+      WHEN txn_type = 'withdrawal' THEN txn_amount
+      ELSE -txn_amount END) OVER(
+        PARTITION BY customer_id
+        ORDER BY txn_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS running_balance
+    ,DATE_TRUNC('month', txn_date) + INTERVAL '1 month' - INTERVAL '1 day' AS txn_month
+  FROM customer_transactions
+
+)
+
+,CTE_2 AS (
+  SELECT
+    customer_id
+    ,txn_date
+    ,txn_month::DATE
+    ,running_balance
+    ,LAST_VALUE(running_balance) OVER (
+      PARTITION BY customer_id, DATE_TRUNC('month', txn_date)
+      ORDER BY txn_date
+      ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+    ) AS month_end_balance
+  FROM CTE
+)
+
+SELECT
+  customer_id
+  ,txn_date
+  ,txn_month
+  ,running_balance
+  ,month_end_balance
+  ,MIN(running_balance) OVER(
+    PARTITION BY customer_id, txn_month
+    ORDER BY txn_date) AS min_balance
+  ,ROUND(AVG(running_balance) OVER(
+    PARTITION BY customer_id, txn_month
+    ORDER BY txn_date),1) AS avg_balance
+  ,MAX(running_balance) OVER(
+    PARTITION BY customer_id, txn_month
+    ORDER BY txn_date) AS max_balance
+FROM CTE_2
+GROUP BY 1, 2, 3, 4, 5
+ORDER BY 1, 2;
+```
